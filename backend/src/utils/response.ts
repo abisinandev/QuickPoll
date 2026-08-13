@@ -1,7 +1,5 @@
 import { Response } from 'express';
 
-// ─── Response Shape Interfaces ────────────────────────────────────────────────
-
 interface SuccessResponse<T> {
   success: true;
   statusCode: number;
@@ -24,8 +22,6 @@ export interface ResponseMeta {
   totalPages?: number;
   [key: string]: unknown;
 }
-
-// ─── Response Helper Functions ────────────────────────────────────────────────
 
 /**
  * Send a standardized success response.

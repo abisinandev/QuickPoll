@@ -9,6 +9,8 @@ const envSchema = z.object({
     .regex(/^\d+$/, 'PORT must be a numeric string')
     .transform(Number)
     .default("4000"),
+  MONGO_URL: z.string().min(1, 'MONGO_URL is required'),
+  SESSION_SECRET: z.string().min(1, 'SESSION_SECRET is required'),
 });
 
 const parsed = envSchema.safeParse(process.env);

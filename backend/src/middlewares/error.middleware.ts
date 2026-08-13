@@ -1,6 +1,6 @@
 import { Request, Response, NextFunction } from 'express';
-import { AppError } from '../utils/app-error.js';
-import { env } from '../utils/envConfig.js';
+import { AppError } from '../utils/app-error';
+import { env } from '../utils/env-config';
 import { HttpStatusCode } from 'axios';
 
 interface ErrorResponse {
