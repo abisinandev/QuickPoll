@@ -2,8 +2,8 @@ import { Request, Response, NextFunction } from 'express';
 import { AppError } from '../utils/app-error';
 
 /**
- * Middleware to enforce authenticated session for protected endpoints.
- * Extracts user ID strictly from server session (req.session.userId).
+ * Middleware for checking authentication.
+ * Extract req.session.userId.
  */
 export const requireAuth = (req: Request, _res: Response, next: NextFunction): void => {
   if (!req.session || !req.session.userId) {

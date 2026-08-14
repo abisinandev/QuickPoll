@@ -13,11 +13,16 @@ export class UserController {
 
       req.session.userId = (user._id as string | object).toString();
 
-      sendSuccess(res, HttpStatusCode.Created, 'Joined successfully', {
-        user: {
-          id: user._id,
-          username: user.username,
-        },
+      req.session.save((err) => {
+        if (err) {
+          return next(err);
+        }
+        sendSuccess(res, HttpStatusCode.Created, 'Joined successfully', {
+          user: {
+            id: user._id,
+            username: user.username,
+          },
+        });
       });
     } catch (error) {
       next(error);

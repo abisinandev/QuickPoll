@@ -27,7 +27,7 @@ export class UserService {
       return updatedUser || existingUser;
     }
 
-    return await this.userRepo.create(username);
+    return await this.userRepo.create({ username });
   }
 
   async getCurrentUser(userId: string): Promise<IUser | null> {

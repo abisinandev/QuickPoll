@@ -121,7 +121,7 @@ export const PollCard: React.FC<PollCardProps> = ({ poll, onVoteSuccess }) => {
                 type="button"
                 onClick={() => handleVote(option._id)}
                 disabled={isSubmitting}
-                className={`w-full flex items-center justify-between p-3.5 rounded-xl border text-left text-sm transition-all cursor-pointer ${
+                className={`group w-full flex items-center justify-between p-3.5 rounded-xl border text-left text-sm transition-all cursor-pointer ${
                   isSelected
                     ? 'border-indigo-600 bg-indigo-50/50 dark:bg-indigo-950/40 dark:border-indigo-500 shadow-xs'
                     : 'bg-slate-50 border-slate-200 hover:border-indigo-300 hover:bg-slate-100/80 dark:bg-slate-950/60 dark:border-slate-800/60 dark:hover:border-slate-700'
@@ -131,13 +131,18 @@ export const PollCard: React.FC<PollCardProps> = ({ poll, onVoteSuccess }) => {
                   {option.text}
                 </span>
 
-                {isSubmitting && isSelected ? (
-                  <Loader2 className="w-4 h-4 text-indigo-600 animate-spin" />
-                ) : (
-                  <span className="text-xs font-semibold text-indigo-600 dark:text-indigo-400 opacity-0 group-hover:opacity-100 transition-opacity">
-                    Vote
+                <div className="flex items-center gap-3">
+                  <span className="text-xs font-medium text-slate-500 dark:text-slate-400 transition-opacity group-hover:opacity-0 group-hover:hidden md:group-hover:block md:group-hover:opacity-100">
+                    {votesCount} {votesCount === 1 ? 'vote' : 'votes'}
                   </span>
-                )}
+                  {isSubmitting && isSelected ? (
+                    <Loader2 className="w-4 h-4 text-indigo-600 animate-spin" />
+                  ) : (
+                    <span className="text-xs font-semibold text-indigo-600 dark:text-indigo-400 opacity-0 group-hover:opacity-100 transition-opacity absolute right-4 md:relative md:right-0">
+                      Vote
+                    </span>
+                  )}
+                </div>
               </button>
             );
           })}

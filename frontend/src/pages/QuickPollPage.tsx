@@ -5,15 +5,40 @@ import { Poll } from '../types/poll.types';
 import { useAuth } from '../store/AuthContext';
 import { apiClient } from '../utils/apiClient';
 import { BarChart3, Loader2 } from 'lucide-react';
+import socket from '../socket/socket.config';
 
-export const PollSpacePage: React.FC = () => {
+export const QuickPollPage: React.FC = () => {
   const { user } = useAuth();
   const [polls, setPolls] = useState<Poll[]>([]);
   const [isLoading, setIsLoading] = useState<boolean>(true);
   const [error, setError] = useState<string | null>(null);
 
   useEffect(() => {
+    socket.connect();
+
+    const handlePollUpdated = (updatedPoll: Poll) => {
+      console.log(`Real-time poll update: `, updatedPoll);
+
+      setPolls((prevPolls) => {
+        return prevPolls.map((poll) => {
+          if (poll._id === updatedPoll._id) {
+            return {
+              ...updatedPoll,
+              userVotedOptionId: poll.userVotedOptionId || updatedPoll.userVotedOptionId,
+            };
+          }
+          return poll;
+        });
+      });
+    };
+
+    socket.on("poll:updated", handlePollUpdated);
     fetchPolls();
+
+    return () => {
+      socket.off("poll:updated", handlePollUpdated);
+      socket.disconnect();
+    };
   }, []);
 
   const fetchPolls = async () => {

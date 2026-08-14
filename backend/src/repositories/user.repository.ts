@@ -1,25 +1,19 @@
+import { Document } from 'mongoose';
 import { User, IUser } from '../models/user.model';
+import { BaseRepository } from './base.repository';
+import { IUserRepository } from './interfaces/user-repository.interface';
 
-export class UserRepository {
-  async create(username: string): Promise<IUser> {
-    const user = new User({
-      username,
-      createdAt: new Date(),
-      lastSeenAt: new Date(),
-    });
-    return await user.save();
+export class UserRepository extends BaseRepository<IUser> implements IUserRepository {
+
+  constructor() {
+    super(User)
   }
-
-  async findById(id: string): Promise<IUser | null> {
-    return await User.findById(id);
-  }
-
   async findByUsername(username: string): Promise<IUser | null> {
-    return await User.findOne({ username: username.toLowerCase() });
+    return await this.model.findOne({ username: username.toLowerCase() });
   }
 
   async updateLastSeen(id: string): Promise<IUser | null> {
-    return await User.findByIdAndUpdate(
+    return await this.model.findByIdAndUpdate(
       id,
       { lastSeenAt: new Date() },
       { new: true }

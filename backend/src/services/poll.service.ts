@@ -1,14 +1,18 @@
-import { PollRepository } from '../repositories/poll.repository';
-import { VoteRepository } from '../repositories/vote.repository';
 import { IPoll } from '../models/poll.model';
 import { AppError } from '../utils/app-error';
 import { pollDto, pollOptionsDto } from '../types/polls.dto';
+import { IPollRepository } from '../repositories/interfaces/poll-repository.interfaces';
+import { IVoteRepository } from '../repositories/interfaces/vote-repository.interface';
+import { ISocketService } from './interfaces/socket-service.interfaces';
+import { IPollService } from './interfaces/poll-service.interface';
 
-export class PollService {
+export class PollService implements IPollService {
+
   constructor(
-    private readonly _pollRepo: PollRepository,
-    private readonly _voteRepo: VoteRepository
-  ) { }
+    private readonly _pollRepo: IPollRepository,
+    private readonly _voteRepo: IVoteRepository,
+    private readonly _socketService: ISocketService,
+  ) {}
 
   async vote(userId: string, pollId: string, optionId: string): Promise<pollDto> {
 
@@ -45,7 +49,13 @@ export class PollService {
     await this._voteRepo.createVote(userId, pollId, optionId);
 
     //return result
-    return await this.getPollResult(poll, userId, optionId);
+    const updatedPoll = await this.getPollResult(poll, userId, optionId);
+
+    // Broadcast updated poll without user-specific vote status
+    const broadcastPoll = { ...updatedPoll, userVotedOptionId: null };
+    this._socketService.emitPollUpdated(broadcastPoll);
+
+    return updatedPoll;
   }
 
   private async getPollResult(
@@ -109,46 +119,5 @@ export class PollService {
     );
 
     return polls;
-  }
-
-  /**
-   * Seed predefined polls if none exist.
-   */
-  async seedPredefinedPolls(): Promise<void> {
-    const count = await this._pollRepo.count();
-    if (count === 0) {
-      console.log('🌱 Seeding predefined polls...');
-      await this._pollRepo.createMany([
-        {
-          question: 'Which backend framework do you prefer?',
-          options: [
-            { text: 'Express' },
-            { text: 'NestJS' },
-            { text: 'Fastify' },
-          ] as any,
-          isActive: true,
-        },
-        {
-          question: 'Which database do you prefer?',
-          options: [
-            { text: 'MongoDB' },
-            { text: 'PostgreSQL' },
-            { text: 'MySQL' },
-          ] as any,
-          isActive: true,
-        },
-        {
-          question: 'Which frontend framework do you prefer?',
-          options: [
-            { text: 'React' },
-            { text: 'Vue' },
-            { text: 'Svelte' },
-            { text: 'Angular' },
-          ] as any,
-          isActive: true,
-        },
-      ]);
-      console.log('✅ Predefined polls seeded successfully!');
-    }
   }
 }

@@ -1,10 +1,10 @@
 import React from 'react';
 import { Routes, Route, Navigate } from 'react-router-dom';
 import { JoinPage } from '../pages/JoinPage';
-import { PollSpacePage } from '../pages/PollSpacePage';
 import { ProtectedRoute } from './ProtectedRoute';
 import { useAuth } from '../store/AuthContext';
 import { LoadingScreen } from '../components/LoadingScreen';
+import { QuickPollPage } from '../pages/QuickPollPage';
 
 export const AppRoutes: React.FC = () => {
   const { user, isCheckingSession } = useAuth();
@@ -23,7 +23,7 @@ export const AppRoutes: React.FC = () => {
         path="/"
         element={
           <ProtectedRoute>
-            <PollSpacePage />
+            <QuickPollPage />
           </ProtectedRoute>
         }
       />

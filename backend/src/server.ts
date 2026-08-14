@@ -5,6 +5,13 @@ import { connectDB } from './configs/db';
 import { PollRepository } from './repositories/poll.repository';
 import { VoteRepository } from './repositories/vote.repository';
 import { PollService } from './services/poll.service';
+import { createServer } from 'http';
+import { SocketService } from './services/socket.server';
+import { buildContainer } from './utils/containers';
+import { createPollRouter } from './routes/poll.routes';
+import { AppError } from './utils/app-error';
+import { NextFunction, Response, Request } from 'express';
+import { globalErrorHandler } from './middlewares/error.middleware';
 
 process.on('uncaughtException', (err: Error) => {
   console.error('UNCAUGHT EXCEPTION! Shutting down...');
@@ -27,12 +34,24 @@ const startServer = async () => {
   try {
     await connectDB();
 
-    const pollRepo = new PollRepository();
-    const voteRepo = new VoteRepository();
-    const pollService = new PollService(pollRepo, voteRepo);
-    await pollService.seedPredefinedPolls();
+    const httpServer = createServer(app);
 
-    const server = app.listen(env.PORT, () => {
+    const container = buildContainer(httpServer);
+
+    const pollRouter = createPollRouter(
+      container.pollController
+    );
+
+    app.use('/api/polls', pollRouter);
+
+    app.all('*', (req: Request, _res: Response, next: NextFunction) => {
+      next(new AppError(`Route ${req.method} ${req.originalUrl} not found`, 404));
+    });
+
+    //Global error handler middleware
+    app.use(globalErrorHandler);
+
+    httpServer.listen(env.PORT, () => {
       console.log(
         `Server running in ${env.NODE_ENV} mode on port ${env.PORT}`
       );
@@ -43,7 +62,7 @@ const startServer = async () => {
       console.error('UNHANDLED REJECTION! Shutting down...');
       console.error(err.name, err.message);
 
-      server.close(() => {
+      httpServer.close(() => {
         process.exit(1);
       });
     });
