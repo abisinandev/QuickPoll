@@ -5,6 +5,7 @@ import { ProtectedRoute } from './ProtectedRoute';
 import { useAuth } from '../store/AuthContext';
 import { LoadingScreen } from '../components/LoadingScreen';
 import { QuickPollPage } from '../pages/QuickPollPage';
+import { ROUTES } from './routes.constants';
 
 export const AppRoutes: React.FC = () => {
   const { user, isCheckingSession } = useAuth();
@@ -16,18 +17,18 @@ export const AppRoutes: React.FC = () => {
   return (
     <Routes>
       <Route
-        path="/join"
-        element={user ? <Navigate to="/" replace /> : <JoinPage />}
+        path={ROUTES.JOIN}
+        element={user ? <Navigate to={ROUTES.HOME} replace /> : <JoinPage />}
       />
       <Route
-        path="/"
+        path={ROUTES.HOME}
         element={
           <ProtectedRoute>
             <QuickPollPage />
           </ProtectedRoute>
         }
       />
-      <Route path="*" element={<Navigate to="/" replace />} />
+      <Route path="*" element={<Navigate to={ROUTES.HOME} replace />} />
     </Routes>
   );
 };

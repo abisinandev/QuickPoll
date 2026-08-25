@@ -1,7 +1,8 @@
 import { Request, Response, NextFunction } from 'express';
 import { UserService } from '../services/user.service';
 import { sendSuccess } from '../utils/response';
-import { HttpStatusCode } from 'axios';
+import { HTTP_STATUS } from '../utils/http-status';
+import { MESSAGES } from '../utils/messages';
 
 export class UserController {
   constructor(private readonly _userSvc: UserService) { }
@@ -17,7 +18,7 @@ export class UserController {
         if (err) {
           return next(err);
         }
-        sendSuccess(res, HttpStatusCode.Created, 'Joined successfully', {
+        sendSuccess(res, HTTP_STATUS.CREATED, MESSAGES.USER.JOINED, {
           user: {
             id: user._id,
             username: user.username,
@@ -33,7 +34,7 @@ export class UserController {
     try {
       const userId = req.session.userId;
       if (!userId) {
-        sendSuccess(res, HttpStatusCode.Unauthorized, 'Unauthenticated', { user: null });
+        sendSuccess(res, HTTP_STATUS.UNAUTHORIZED, MESSAGES.USER.UNAUTHENTICATED, { user: null });
         return;
       }
 
@@ -41,11 +42,11 @@ export class UserController {
 
       if (!user) {
         req.session.destroy(() => { });
-        sendSuccess(res, HttpStatusCode.Unauthorized, 'Unauthenticated', { user: null });
+        sendSuccess(res, HTTP_STATUS.UNAUTHORIZED, MESSAGES.USER.UNAUTHENTICATED, { user: null });
         return;
       }
 
-      sendSuccess(res, HttpStatusCode.Ok, 'Current user session fetched', {
+      sendSuccess(res, HTTP_STATUS.OK, MESSAGES.USER.SESSION_FETCHED, {
         user: {
           id: user._id,
           username: user.username,
@@ -56,4 +57,3 @@ export class UserController {
     }
   };
 }
-

@@ -4,12 +4,20 @@ import { SocketService } from "../services/socket.server";
 import { PollService } from "../services/poll.service";
 import { PollController } from "../controllers/poll.controller";
 import { PollRepository } from "../repositories/poll.repository";
+import { ChatRepository } from "../repositories/chat.repository";
+import { ChatService } from "../services/chat.service";
+import { ChatController } from "../controllers/chat.controller";
 import { PollSeeder } from './seed-polls';
 
 export const buildContainer = (httpServer: HttpServer) => {
     const pollRepository = new PollRepository();
     const voteRepository = new VoteRepository();
-    const socketService = new SocketService(httpServer);
+    
+    const chatRepository = new ChatRepository();
+    const chatService = new ChatService(chatRepository);
+    const chatController = new ChatController(chatService);
+    
+    const socketService = new SocketService(httpServer, chatService);
 
     const pollService = new PollService(
         pollRepository,
@@ -23,6 +31,7 @@ export const buildContainer = (httpServer: HttpServer) => {
     return {
         pollController,
         pollSeeder,
+        chatController,
         socketService
     };
 };

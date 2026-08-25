@@ -5,6 +5,8 @@ import { IPollRepository } from '../repositories/interfaces/poll-repository.inte
 import { IVoteRepository } from '../repositories/interfaces/vote-repository.interface';
 import { ISocketService } from './interfaces/socket-service.interfaces';
 import { IPollService } from './interfaces/poll-service.interface';
+import { MESSAGES } from '../utils/messages';
+import { HTTP_STATUS } from '../utils/http-status';
 
 export class PollService implements IPollService {
 
@@ -17,41 +19,41 @@ export class PollService implements IPollService {
   async vote(userId: string, pollId: string, optionId: string): Promise<pollDto> {
 
     if (!userId) {
-      throw new AppError('Unauthorized. Please join QuickPoll first.', 401);
+      throw new AppError(MESSAGES.USER.UNAUTHORIZED, HTTP_STATUS.UNAUTHORIZED);
     }
 
     if (!pollId || !optionId) {
-      throw new AppError('Poll ID and Option ID are required', 400);
+      throw new AppError(MESSAGES.POLL.IDS_REQUIRED, HTTP_STATUS.BAD_REQUEST);
     }
 
     const poll = await this._pollRepo.findById(pollId);
     if (!poll) {
-      throw new AppError('Poll not found', 404);
+      throw new AppError(MESSAGES.POLL.NOT_FOUND, HTTP_STATUS.NOT_FOUND);
     }
 
     if (!poll.isActive) {
-      throw new AppError('Poll is not active', 400);
+      throw new AppError(MESSAGES.POLL.NOT_ACTIVE, HTTP_STATUS.BAD_REQUEST);
     }
 
     // Does option belong to this poll
     const optionExists = poll.options.some((opt) => opt._id.toString() === optionId);
     if (!optionExists) {
-      throw new AppError('Option does not belong to this poll', 400);
+      throw new AppError(MESSAGES.POLL.OPTION_NOT_FOUND, HTTP_STATUS.BAD_REQUEST);
     }
 
-    //Checking already voted
+    // Checking already voted
     const existingVote = await this._voteRepo.findByUserAndPoll(userId, pollId);
     if (existingVote) {
-      throw new AppError('You have already voted on this poll', 400);
+      throw new AppError(MESSAGES.POLL.ALREADY_VOTED, HTTP_STATUS.BAD_REQUEST);
     }
 
-    //Create vote
+    // Create vote
     await this._voteRepo.createVote(userId, pollId, optionId);
 
-    //return result
+    // Return result
     const updatedPoll = await this.getPollResult(poll, userId, optionId);
 
-    // Broadcast updated poll without user-specific vote status
+    // Broadcast updated polls
     const broadcastPoll = { ...updatedPoll, userVotedOptionId: null };
     this._socketService.emitPollUpdated(broadcastPoll);
 

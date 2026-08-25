@@ -2,13 +2,11 @@ import express, { Application, Request, Response, NextFunction } from 'express';
 import cors from 'cors';
 import morgan from 'morgan';
 import { env } from './utils/env-config';
-import { AppError } from './utils/app-error';
-import { globalErrorHandler } from './middlewares/error.middleware';
 import { sendSuccess } from './utils/response';
 import { HttpStatusCode } from 'axios';
 import userRoutes from './routes/user.routes';
-// import pollRoutes from './routes/poll.routes';
 import { sessionMiddleware } from './configs/session';
+import { ROUTES } from './utils/routes';
 
 const app: Application = express();
 
@@ -35,7 +33,7 @@ app.get('/api/health', (_req: Request, res: Response) => {
 });
 
 //API Routes
-app.use('/api/users', userRoutes);
+app.use(ROUTES.USER.BASE, userRoutes);
 // app.use('/api/polls', pollRoutes);
 
 // app.all('*', (req: Request, _res: Response, next: NextFunction) => {

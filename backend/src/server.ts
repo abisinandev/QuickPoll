@@ -2,16 +2,15 @@ import 'dotenv/config';
 import { env } from './utils/env-config';
 import app from './app';
 import { connectDB } from './configs/db';
-import { PollRepository } from './repositories/poll.repository';
-import { VoteRepository } from './repositories/vote.repository';
-import { PollService } from './services/poll.service';
 import { createServer } from 'http';
-import { SocketService } from './services/socket.server';
 import { buildContainer } from './utils/containers';
 import { createPollRouter } from './routes/poll.routes';
+import { createChatRouter } from './routes/chat.routes';
 import { AppError } from './utils/app-error';
 import { NextFunction, Response, Request } from 'express';
 import { globalErrorHandler } from './middlewares/error.middleware';
+import { ROUTES } from './utils/routes';
+import { MESSAGES } from './utils/messages';
 
 process.on('uncaughtException', (err: Error) => {
   console.error('UNCAUGHT EXCEPTION! Shutting down...');
@@ -41,11 +40,15 @@ const startServer = async () => {
     const pollRouter = createPollRouter(
       container.pollController
     );
+    const chatRouter = createChatRouter(
+      container.chatController
+    );
 
-    app.use('/api/polls', pollRouter);
+    app.use(ROUTES.POLL.BASE, pollRouter);
+    app.use(ROUTES.CHAT.BASE, chatRouter);
 
     app.all('*', (req: Request, _res: Response, next: NextFunction) => {
-      next(new AppError(`Route ${req.method} ${req.originalUrl} not found`, 404));
+      next(new AppError(MESSAGES.SERVER.ROUTE_NOT_FOUND(req.method, req.originalUrl), 404));
     });
 
     //Global error handler middleware

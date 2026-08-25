@@ -1,10 +1,11 @@
 import React, { useState, useEffect } from 'react';
 import { Header } from '../components/Header';
 import { PollCard } from '../components/PollCard';
+import { GroupChat } from '../components/GroupChat';
 import { Poll } from '../types/poll.types';
 import { useAuth } from '../store/AuthContext';
-import { apiClient } from '../utils/apiClient';
-import { BarChart3, Loader2 } from 'lucide-react';
+import { fetchPollsApi } from '../api/poll.api';
+import { Terminal, Loader2 } from 'lucide-react';
 import socket from '../socket/socket.config';
 
 export const QuickPollPage: React.FC = () => {
@@ -45,7 +46,7 @@ export const QuickPollPage: React.FC = () => {
     setIsLoading(true);
     setError(null);
     try {
-      const res = await apiClient<{ polls: Poll[] }>('/api/polls');
+      const res = await fetchPollsApi();
       if (res.success && res.data?.polls) {
         setPolls(res.data.polls);
       } else {
@@ -66,50 +67,51 @@ export const QuickPollPage: React.FC = () => {
   };
 
   return (
-    <div className="min-h-screen bg-[#F8FAFC] dark:bg-slate-950 text-slate-900 dark:text-slate-100 flex flex-col selection:bg-indigo-500 selection:text-white">
+    <div className="min-h-screen bg-white dark:bg-black text-zinc-900 dark:text-zinc-100 flex flex-col font-mono selection:bg-zinc-900 selection:text-white dark:selection:bg-white dark:selection:text-black">
       <Header />
 
-      <main className="max-w-6xl mx-auto px-6 py-10 flex-1 w-full">
-        {/* Welcome Section */}
-        <section className="mb-10 p-8 rounded-3xl bg-white dark:bg-gradient-to-r dark:from-indigo-950/40 dark:via-slate-900 dark:to-slate-950 border border-slate-200 dark:border-slate-800/80 shadow-sm relative overflow-hidden">
-          <div className="absolute -right-10 -bottom-10 w-64 h-64 bg-indigo-600/10 blur-3xl rounded-full pointer-events-none" />
+      <main className="max-w-7xl mx-auto px-6 py-10 flex-1 w-full flex flex-col xl:flex-row gap-8">
+        {/* Left Side: Polls */}
+        <div className="flex-1 min-w-0">
+          {/* Welcome Section */}
+          <section className="mb-10 p-8 border-2 border-zinc-900 dark:border-zinc-800 bg-zinc-50 dark:bg-zinc-950 relative overflow-hidden">
           <div className="relative z-10">
-            <div className="inline-flex items-center gap-1.5 text-xs font-semibold text-indigo-600 dark:text-indigo-400 uppercase tracking-wider mb-2">
-              <BarChart3 className="w-4 h-4" />
-              <span>PollSpace Live Dashboard</span>
+            <div className="inline-flex items-center gap-2 text-[10px] font-bold text-zinc-900 dark:text-zinc-100 uppercase tracking-widest mb-3 bg-zinc-200 dark:bg-zinc-800 px-2 py-1">
+              <Terminal className="w-3 h-3" />
+              <span>SYS_DASHBOARD // ACTIVE</span>
             </div>
-            <h1 className="text-3xl font-extrabold text-slate-900 dark:text-white tracking-tight mb-2">
-              Welcome, {user?.username}! 👋
+            <h1 className="text-3xl font-black text-zinc-900 dark:text-white tracking-tighter uppercase mb-2">
+              WELCOME, {user?.username} //
             </h1>
-            <p className="text-slate-500 dark:text-slate-400 max-w-xl text-sm leading-relaxed">
-              Explore active predefined polls below. Vote on options and see live percentages update instantly.
+            <p className="text-zinc-500 dark:text-zinc-400 max-w-xl text-xs uppercase tracking-widest leading-relaxed">
+              Observe active polling nodes. Transmit votes. Sync in real-time.
             </p>
           </div>
         </section>
 
         {/* Predefined Polls Grid */}
         <section>
-          <div className="flex items-center justify-between mb-6">
-            <h2 className="text-xl font-bold text-slate-900 dark:text-white tracking-tight flex items-center gap-2">
-              <span>Active Predefined Polls</span>
-              <span className="text-xs font-semibold px-2.5 py-0.5 rounded-full bg-indigo-50 text-indigo-700 dark:bg-indigo-500/20 dark:text-indigo-300 border border-indigo-200 dark:border-indigo-500/30">
-                {polls.length} Available
+          <div className="flex items-center justify-between mb-6 border-b-2 border-zinc-900 dark:border-zinc-800 pb-2">
+            <h2 className="text-lg font-black text-zinc-900 dark:text-white uppercase tracking-widest flex items-center gap-2">
+              <span>POLLING_NODES</span>
+              <span className="text-[10px] font-bold px-2 py-0.5 bg-zinc-900 text-white dark:bg-white dark:text-black">
+                {polls.length} ONLINE
               </span>
             </h2>
           </div>
 
           {isLoading ? (
-            <div className="py-16 text-center text-slate-400 flex flex-col items-center gap-3">
-              <Loader2 className="w-8 h-8 animate-spin text-indigo-500" />
-              <p className="text-sm font-medium">Loading polls...</p>
+            <div className="py-16 text-center text-zinc-400 flex flex-col items-center gap-3">
+              <Loader2 className="w-8 h-8 animate-spin text-zinc-900 dark:text-white" />
+              <p className="text-[10px] uppercase font-bold tracking-widest">CONNECTING TO NODES...</p>
             </div>
           ) : error ? (
-            <div className="p-6 bg-rose-50 border border-rose-200 dark:bg-rose-950/30 dark:border-rose-900/50 rounded-2xl text-rose-700 dark:text-rose-300 text-sm">
-              ⚠️ {error}
+            <div className="p-6 border-2 border-red-600 bg-red-600/10 text-red-600 font-bold uppercase text-[10px] tracking-widest">
+              ERROR: {error}
             </div>
           ) : polls.length === 0 ? (
-            <div className="p-12 text-center bg-white dark:bg-slate-900/40 border border-slate-200 dark:border-slate-800/80 rounded-3xl text-slate-500">
-              No active polls found at the moment.
+            <div className="p-12 text-center border-2 border-dashed border-zinc-300 dark:border-zinc-800 text-zinc-500 font-bold text-[10px] uppercase tracking-widest">
+              NO ACTIVE NODES DETECTED.
             </div>
           ) : (
             <div className="grid grid-cols-1 md:grid-cols-2 gap-6">
@@ -123,6 +125,12 @@ export const QuickPollPage: React.FC = () => {
             </div>
           )}
         </section>
+        </div>
+
+        {/* Right Side: Group Chat */}
+        <div className="xl:w-[400px] shrink-0 h-[800px]">
+          <GroupChat />
+        </div>
       </main>
     </div>
   );
