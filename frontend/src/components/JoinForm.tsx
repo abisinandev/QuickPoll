@@ -2,6 +2,7 @@ import React, { useState } from 'react';
 import { ArrowRight, Loader2, User as UserIcon } from 'lucide-react';
 import { useAuth } from '../store/AuthContext';
 import { useNavigate } from 'react-router-dom';
+import { ROUTES } from '../routes/routes.constants';
 
 interface JoinFormProps {
   onJoinSuccess?: () => void;
@@ -43,7 +44,7 @@ export const JoinForm: React.FC<JoinFormProps> = ({ onJoinSuccess }) => {
 
       if (result.success) {
         if (onJoinSuccess) onJoinSuccess();
-        navigate('/', { replace: true });
+        navigate(ROUTES.HOME, { replace: true });
       } else {
         setJoinError(result.message || 'Failed to join QuickPoll. Please try again.');
       }
@@ -56,32 +57,32 @@ export const JoinForm: React.FC<JoinFormProps> = ({ onJoinSuccess }) => {
   };
 
   return (
-    <form onSubmit={handleSubmit} className="space-y-4">
+    <form onSubmit={handleSubmit} className="space-y-6">
       <div>
         <label
           htmlFor="username"
-          className="block text-xs font-semibold text-slate-700 dark:text-slate-300 uppercase tracking-wider mb-2"
+          className="block text-[10px] font-bold text-zinc-900 dark:text-zinc-100 uppercase tracking-widest mb-3"
         >
-          Your display name
+          USER IDENTIFIER
         </label>
         <div className="relative">
-          <div className="absolute inset-y-0 left-0 pl-3.5 flex items-center pointer-events-none text-slate-400 dark:text-slate-500">
-            <UserIcon className="w-5 h-5" />
+          <div className="absolute inset-y-0 left-0 pl-3.5 flex items-center pointer-events-none text-zinc-400 dark:text-zinc-500">
+            <UserIcon className="w-4 h-4" />
           </div>
           <input
             id="username"
             type="text"
             value={usernameInput}
             onChange={(e) => setUsernameInput(e.target.value)}
-            placeholder="Enter your name"
+            placeholder="Enter alias"
             disabled={isJoining}
             autoFocus
-            className="w-full bg-white dark:bg-slate-950 border border-slate-300 dark:border-slate-800 rounded-xl py-3 pl-11 pr-4 text-sm text-slate-900 dark:text-slate-100 placeholder-slate-400 dark:placeholder-slate-600 shadow-sm focus:outline-none focus:border-indigo-600 dark:focus:border-indigo-500 focus:ring-2 focus:ring-indigo-600/20 dark:focus:ring-indigo-500/20 transition-all disabled:bg-slate-50 dark:disabled:bg-slate-900"
+            className="w-full bg-transparent border-2 border-zinc-900 dark:border-zinc-100 rounded-none py-3.5 pl-11 pr-4 text-sm font-medium text-zinc-900 dark:text-zinc-100 placeholder-zinc-400 dark:placeholder-zinc-600 focus:outline-none focus:bg-zinc-100 dark:focus:bg-zinc-900 transition-colors disabled:opacity-50"
           />
         </div>
         {joinError && (
-          <p className="mt-2 text-xs text-rose-600 dark:text-rose-400 flex items-center gap-1 font-medium">
-            <span>⚠️</span> {joinError}
+          <p className="mt-3 text-[10px] uppercase tracking-widest text-white bg-red-600 px-2 py-1 inline-block font-bold">
+            ERROR: {joinError}
           </p>
         )}
       </div>
@@ -89,23 +90,23 @@ export const JoinForm: React.FC<JoinFormProps> = ({ onJoinSuccess }) => {
       <button
         type="submit"
         disabled={isJoining || !usernameInput.trim()}
-        className="w-full bg-indigo-600 hover:bg-indigo-700 active:bg-indigo-800 text-white font-semibold py-3 px-5 rounded-xl shadow-md shadow-indigo-600/20 flex items-center justify-center gap-2 transition-all disabled:opacity-50 disabled:cursor-not-allowed cursor-pointer text-sm"
+        className="w-full bg-zinc-900 dark:bg-zinc-100 text-white dark:text-zinc-900 hover:bg-black dark:hover:bg-white font-bold py-4 px-5 rounded-none flex items-center justify-center gap-3 transition-colors disabled:opacity-50 disabled:cursor-not-allowed cursor-pointer text-xs uppercase tracking-widest border-2 border-transparent hover:border-zinc-900 dark:hover:border-zinc-100"
       >
         {isJoining ? (
           <>
             <Loader2 className="w-4 h-4 animate-spin" />
-            <span>Joining QuickPoll...</span>
+            <span>INITIALIZING...</span>
           </>
         ) : (
           <>
-            <span>Join QuickPoll</span>
+            <span>INITIALIZE SESSION</span>
             <ArrowRight className="w-4 h-4" />
           </>
         )}
       </button>
 
-      <p className="text-xs text-slate-500 dark:text-slate-400 text-center leading-relaxed">
-        Your name will appear next to your messages and votes.
+      <p className="text-[10px] uppercase tracking-widest text-zinc-500 dark:text-zinc-400 text-center">
+        Alias will be attached to all data packets.
       </p>
     </form>
   );

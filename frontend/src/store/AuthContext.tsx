@@ -1,6 +1,6 @@
 import React, { createContext, useContext, useState, useEffect } from 'react';
 import { User } from '../types/user.types';
-import { apiClient } from '../utils/apiClient';
+import { checkSessionApi, joinUserApi } from '../api/auth.api';
 
 interface AuthContextType {
   user: User | null;
@@ -18,7 +18,7 @@ export const AuthProvider: React.FC<{ children: React.ReactNode }> = ({ children
   const checkSession = async () => {
     setIsCheckingSession(true);
     try {
-      const res = await apiClient<{ user: User | null }>('/api/users/me');
+      const res = await checkSessionApi();
       if (res.success && res.data?.user) {
         setUser(res.data.user);
       } else {
@@ -38,10 +38,7 @@ export const AuthProvider: React.FC<{ children: React.ReactNode }> = ({ children
 
   const joinUser = async (username: string): Promise<{ success: boolean; message?: string }> => {
     try {
-      const res = await apiClient<{ user: User }>('/api/users/join', {
-        method: 'POST',
-        body: JSON.stringify({ username }),
-      });
+      const res = await joinUserApi(username);
 
       if (res.success && res.data?.user) {
         setUser(res.data.user);

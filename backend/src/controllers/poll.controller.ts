@@ -1,16 +1,18 @@
 import { Request, Response, NextFunction } from 'express';
-import { PollService } from '../services/poll.service';
 import { sendSuccess } from '../utils/response';
-import { HttpStatusCode } from 'axios';
+import { HTTP_STATUS } from '../utils/http-status';
+import { MESSAGES } from '../utils/messages';
+import { IPollService } from '../services/interfaces/poll-service.interface';
 
 export class PollController {
-  constructor(private readonly _pollSvc: PollService) {}
+
+  constructor(private readonly _pollService: IPollService) {}
 
   getPolls = async (req: Request, res: Response, next: NextFunction): Promise<void> => {
     try {
       const userId = req.session?.userId;
-      const polls = await this._pollSvc.getActivePolls(userId);
-      sendSuccess(res, HttpStatusCode.Ok, 'Polls retrieved successfully', { polls });
+      const polls = await this._pollService.getActivePolls(userId);
+      sendSuccess(res, HTTP_STATUS.OK, MESSAGES.POLL.FETCHED, { polls });
     } catch (error) {
       next(error);
     }
@@ -22,9 +24,9 @@ export class PollController {
       const { pollId } = req.params;
       const { optionId } = req.body;
 
-      const updatedPoll = await this._pollSvc.vote(userId, pollId, optionId);
+      const updatedPoll = await this._pollService.vote(userId, pollId, optionId);
 
-      sendSuccess(res, HttpStatusCode.Ok, 'Vote recorded successfully', { poll: updatedPoll });
+      sendSuccess(res, HTTP_STATUS.OK, MESSAGES.POLL.VOTE_RECORDED, { poll: updatedPoll });
     } catch (error) {
       next(error);
     }

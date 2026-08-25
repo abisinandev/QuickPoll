@@ -1,51 +1,63 @@
-import { PollRepository } from '../repositories/poll.repository';
-import { VoteRepository } from '../repositories/vote.repository';
 import { IPoll } from '../models/poll.model';
 import { AppError } from '../utils/app-error';
 import { pollDto, pollOptionsDto } from '../types/polls.dto';
+import { IPollRepository } from '../repositories/interfaces/poll-repository.interfaces';
+import { IVoteRepository } from '../repositories/interfaces/vote-repository.interface';
+import { ISocketService } from './interfaces/socket-service.interfaces';
+import { IPollService } from './interfaces/poll-service.interface';
+import { MESSAGES } from '../utils/messages';
+import { HTTP_STATUS } from '../utils/http-status';
 
-export class PollService {
+export class PollService implements IPollService {
+
   constructor(
-    private readonly _pollRepo: PollRepository,
-    private readonly _voteRepo: VoteRepository
-  ) { }
+    private readonly _pollRepo: IPollRepository,
+    private readonly _voteRepo: IVoteRepository,
+    private readonly _socketService: ISocketService,
+  ) {}
 
   async vote(userId: string, pollId: string, optionId: string): Promise<pollDto> {
 
     if (!userId) {
-      throw new AppError('Unauthorized. Please join QuickPoll first.', 401);
+      throw new AppError(MESSAGES.USER.UNAUTHORIZED, HTTP_STATUS.UNAUTHORIZED);
     }
 
     if (!pollId || !optionId) {
-      throw new AppError('Poll ID and Option ID are required', 400);
+      throw new AppError(MESSAGES.POLL.IDS_REQUIRED, HTTP_STATUS.BAD_REQUEST);
     }
 
     const poll = await this._pollRepo.findById(pollId);
     if (!poll) {
-      throw new AppError('Poll not found', 404);
+      throw new AppError(MESSAGES.POLL.NOT_FOUND, HTTP_STATUS.NOT_FOUND);
     }
 
     if (!poll.isActive) {
-      throw new AppError('Poll is not active', 400);
+      throw new AppError(MESSAGES.POLL.NOT_ACTIVE, HTTP_STATUS.BAD_REQUEST);
     }
 
     // Does option belong to this poll
     const optionExists = poll.options.some((opt) => opt._id.toString() === optionId);
     if (!optionExists) {
-      throw new AppError('Option does not belong to this poll', 400);
+      throw new AppError(MESSAGES.POLL.OPTION_NOT_FOUND, HTTP_STATUS.BAD_REQUEST);
     }
 
-    //Checking already voted
+    // Checking already voted
     const existingVote = await this._voteRepo.findByUserAndPoll(userId, pollId);
     if (existingVote) {
-      throw new AppError('You have already voted on this poll', 400);
+      throw new AppError(MESSAGES.POLL.ALREADY_VOTED, HTTP_STATUS.BAD_REQUEST);
     }
 
-    //Create vote
+    // Create vote
     await this._voteRepo.createVote(userId, pollId, optionId);
 
-    //return result
-    return await this.getPollResult(poll, userId, optionId);
+    // Return result
+    const updatedPoll = await this.getPollResult(poll, userId, optionId);
+
+    // Broadcast updated polls
+    const broadcastPoll = { ...updatedPoll, userVotedOptionId: null };
+    this._socketService.emitPollUpdated(broadcastPoll);
+
+    return updatedPoll;
   }
 
   private async getPollResult(
@@ -109,46 +121,5 @@ export class PollService {
     );
 
     return polls;
-  }
-
-  /**
-   * Seed predefined polls if none exist.
-   */
-  async seedPredefinedPolls(): Promise<void> {
-    const count = await this._pollRepo.count();
-    if (count === 0) {
-      console.log('🌱 Seeding predefined polls...');
-      await this._pollRepo.createMany([
-        {
-          question: 'Which backend framework do you prefer?',
-          options: [
-            { text: 'Express' },
-            { text: 'NestJS' },
-            { text: 'Fastify' },
-          ] as any,
-          isActive: true,
-        },
-        {
-          question: 'Which database do you prefer?',
-          options: [
-            { text: 'MongoDB' },
-            { text: 'PostgreSQL' },
-            { text: 'MySQL' },
-          ] as any,
-          isActive: true,
-        },
-        {
-          question: 'Which frontend framework do you prefer?',
-          options: [
-            { text: 'React' },
-            { text: 'Vue' },
-            { text: 'Svelte' },
-            { text: 'Angular' },
-          ] as any,
-          isActive: true,
-        },
-      ]);
-      console.log('✅ Predefined polls seeded successfully!');
-    }
   }
 }

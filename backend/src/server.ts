@@ -2,9 +2,15 @@ import 'dotenv/config';
 import { env } from './utils/env-config';
 import app from './app';
 import { connectDB } from './configs/db';
-import { PollRepository } from './repositories/poll.repository';
-import { VoteRepository } from './repositories/vote.repository';
-import { PollService } from './services/poll.service';
+import { createServer } from 'http';
+import { buildContainer } from './utils/containers';
+import { createPollRouter } from './routes/poll.routes';
+import { createChatRouter } from './routes/chat.routes';
+import { AppError } from './utils/app-error';
+import { NextFunction, Response, Request } from 'express';
+import { globalErrorHandler } from './middlewares/error.middleware';
+import { ROUTES } from './utils/routes';
+import { MESSAGES } from './utils/messages';
 
 process.on('uncaughtException', (err: Error) => {
   console.error('UNCAUGHT EXCEPTION! Shutting down...');
@@ -27,12 +33,28 @@ const startServer = async () => {
   try {
     await connectDB();
 
-    const pollRepo = new PollRepository();
-    const voteRepo = new VoteRepository();
-    const pollService = new PollService(pollRepo, voteRepo);
-    await pollService.seedPredefinedPolls();
+    const httpServer = createServer(app);
 
-    const server = app.listen(env.PORT, () => {
+    const container = buildContainer(httpServer);
+
+    const pollRouter = createPollRouter(
+      container.pollController
+    );
+    const chatRouter = createChatRouter(
+      container.chatController
+    );
+
+    app.use(ROUTES.POLL.BASE, pollRouter);
+    app.use(ROUTES.CHAT.BASE, chatRouter);
+
+    app.all('*', (req: Request, _res: Response, next: NextFunction) => {
+      next(new AppError(MESSAGES.SERVER.ROUTE_NOT_FOUND(req.method, req.originalUrl), 404));
+    });
+
+    //Global error handler middleware
+    app.use(globalErrorHandler);
+
+    httpServer.listen(env.PORT, () => {
       console.log(
         `Server running in ${env.NODE_ENV} mode on port ${env.PORT}`
       );
@@ -43,7 +65,7 @@ const startServer = async () => {
       console.error('UNHANDLED REJECTION! Shutting down...');
       console.error(err.name, err.message);
 
-      server.close(() => {
+      httpServer.close(() => {
         process.exit(1);
       });
     });

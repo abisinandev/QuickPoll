@@ -26,4 +26,6 @@ const messageSchema = new Schema<IMessage>(
   }
 );
 
+messageSchema.index({ createdAt: -1 });
+
 export const Message = model<IMessage>('Message', messageSchema);

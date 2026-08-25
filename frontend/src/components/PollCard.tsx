@@ -1,7 +1,7 @@
 import React, { useState } from 'react';
 import { Poll } from '../types/poll.types';
 import { CheckCircle, CheckCircle2, Loader2, Vote as VoteIcon } from 'lucide-react';
-import { apiClient } from '../utils/apiClient';
+import { voteApi } from '../api/poll.api';
 
 interface PollCardProps {
   poll: Poll;
@@ -23,10 +23,7 @@ export const PollCard: React.FC<PollCardProps> = ({ poll, onVoteSuccess }) => {
     setIsSubmitting(true);
 
     try {
-      const res = await apiClient<{ poll: Poll }>(`/api/polls/${poll._id}/vote`, {
-        method: 'POST',
-        body: JSON.stringify({ optionId }),
-      });
+      const res = await voteApi(poll._id, optionId);
 
       if (res.success && res.data?.poll) {
         if (onVoteSuccess) {
@@ -44,24 +41,24 @@ export const PollCard: React.FC<PollCardProps> = ({ poll, onVoteSuccess }) => {
   };
 
   return (
-    <div className="bg-white border border-slate-200 dark:bg-slate-900/60 dark:border-slate-800/80 rounded-2xl p-6 transition-all shadow-sm hover:shadow-md flex flex-col justify-between">
+    <div className="bg-transparent border-2 border-zinc-900 dark:border-zinc-800 p-6 flex flex-col justify-between font-mono">
       <div>
         {/* Header Badges */}
-        <div className="flex items-center justify-between gap-3 mb-3">
-          <span className="inline-flex items-center gap-1 text-[11px] font-semibold px-2.5 py-0.5 rounded-full bg-emerald-50 text-emerald-700 dark:bg-emerald-500/10 dark:text-emerald-400 border border-emerald-200 dark:border-emerald-500/20">
+        <div className="flex items-center justify-between gap-3 mb-4">
+          <span className="inline-flex items-center gap-1.5 text-[10px] font-bold tracking-widest uppercase px-2 py-0.5 border-2 border-zinc-900 dark:border-zinc-100 text-zinc-900 dark:text-zinc-100">
             <CheckCircle className="w-3 h-3" />
-            <span>Active</span>
+            <span>ACTIVE</span>
           </span>
           {hasVoted && (
-            <span className="inline-flex items-center gap-1 text-[11px] font-semibold px-2.5 py-0.5 rounded-full bg-indigo-50 text-indigo-700 dark:bg-indigo-500/20 dark:text-indigo-300 border border-indigo-200 dark:border-indigo-500/30">
-              <CheckCircle2 className="w-3 h-3 text-indigo-600 dark:text-indigo-400" />
-              <span>Voted</span>
+            <span className="inline-flex items-center gap-1.5 text-[10px] font-bold tracking-widest uppercase px-2 py-0.5 bg-zinc-900 text-white dark:bg-white dark:text-zinc-900">
+              <CheckCircle2 className="w-3 h-3" />
+              <span>VOTED</span>
             </span>
           )}
         </div>
 
         {/* Question */}
-        <h3 className="text-lg font-semibold text-slate-900 dark:text-white mb-4 leading-snug">
+        <h3 className="text-xl font-black text-zinc-900 dark:text-white uppercase tracking-tighter mb-5 leading-none">
           {poll.question}
         </h3>
 
@@ -78,34 +75,34 @@ export const PollCard: React.FC<PollCardProps> = ({ poll, onVoteSuccess }) => {
               return (
                 <div
                   key={option._id}
-                  className={`relative p-3.5 rounded-xl border transition-all overflow-hidden ${
+                  className={`relative p-3.5 border-2 transition-all overflow-hidden ${
                     isUserChoice
-                      ? 'bg-indigo-50/50 border-indigo-300 dark:bg-indigo-950/40 dark:border-indigo-700'
-                      : 'bg-slate-50 border-slate-200 dark:bg-slate-950/60 dark:border-slate-800/60'
+                      ? 'border-zinc-900 dark:border-zinc-100'
+                      : 'border-zinc-300 dark:border-zinc-800'
                   }`}
                 >
                   {/* Animated Background Progress Fill */}
                   <div
-                    className={`absolute inset-y-0 left-0 transition-all duration-700 ease-out opacity-20 ${
-                      isUserChoice ? 'bg-indigo-600 dark:bg-indigo-500' : 'bg-slate-400 dark:bg-slate-600'
+                    className={`absolute inset-y-0 left-0 transition-all duration-700 ease-out ${
+                      isUserChoice ? 'bg-zinc-900/10 dark:bg-zinc-100/10' : 'bg-zinc-200 dark:bg-zinc-900'
                     }`}
                     style={{ width: `${percentage}%` }}
                   />
 
-                  <div className="relative z-10 flex items-center justify-between text-sm">
+                  <div className="relative z-10 flex items-center justify-between text-xs font-bold tracking-widest uppercase">
                     <div className="flex items-center gap-2">
-                      <span className={`font-semibold ${isUserChoice ? 'text-indigo-900 dark:text-indigo-200' : 'text-slate-800 dark:text-slate-200'}`}>
+                      <span className={`${isUserChoice ? 'text-zinc-900 dark:text-zinc-100' : 'text-zinc-500 dark:text-zinc-400'}`}>
                         {option.text}
                       </span>
                       {isUserChoice && (
-                        <span className="text-[10px] font-bold uppercase px-2 py-0.5 rounded bg-indigo-600 text-white shadow-xs">
-                          Your Vote
+                        <span className="text-[9px] px-1.5 py-0.5 bg-zinc-900 text-white dark:bg-white dark:text-zinc-900">
+                          YOUR VOTE
                         </span>
                       )}
                     </div>
-                    <div className="flex items-center gap-2 text-xs font-semibold">
-                      <span className="text-slate-500 dark:text-slate-400">({votesCount})</span>
-                      <span className={isUserChoice ? 'text-indigo-700 dark:text-indigo-300 font-bold' : 'text-slate-700 dark:text-slate-300'}>
+                    <div className="flex items-center gap-2">
+                      <span className="text-zinc-400 dark:text-zinc-600">[{votesCount}]</span>
+                      <span className={isUserChoice ? 'text-zinc-900 dark:text-zinc-100' : 'text-zinc-500 dark:text-zinc-400'}>
                         {percentage}%
                       </span>
                     </div>
@@ -121,41 +118,46 @@ export const PollCard: React.FC<PollCardProps> = ({ poll, onVoteSuccess }) => {
                 type="button"
                 onClick={() => handleVote(option._id)}
                 disabled={isSubmitting}
-                className={`w-full flex items-center justify-between p-3.5 rounded-xl border text-left text-sm transition-all cursor-pointer ${
+                className={`group w-full flex items-center justify-between p-3.5 border-2 text-left text-xs font-bold uppercase tracking-widest transition-all cursor-pointer ${
                   isSelected
-                    ? 'border-indigo-600 bg-indigo-50/50 dark:bg-indigo-950/40 dark:border-indigo-500 shadow-xs'
-                    : 'bg-slate-50 border-slate-200 hover:border-indigo-300 hover:bg-slate-100/80 dark:bg-slate-950/60 dark:border-slate-800/60 dark:hover:border-slate-700'
+                    ? 'border-zinc-900 dark:border-zinc-100 bg-zinc-100 dark:bg-zinc-900 text-zinc-900 dark:text-zinc-100'
+                    : 'border-zinc-300 dark:border-zinc-800 hover:border-zinc-900 dark:hover:border-zinc-100 text-zinc-600 dark:text-zinc-400 hover:text-zinc-900 dark:hover:text-zinc-100'
                 }`}
               >
-                <span className="font-medium text-slate-800 dark:text-slate-200">
+                <span>
                   {option.text}
                 </span>
 
-                {isSubmitting && isSelected ? (
-                  <Loader2 className="w-4 h-4 text-indigo-600 animate-spin" />
-                ) : (
-                  <span className="text-xs font-semibold text-indigo-600 dark:text-indigo-400 opacity-0 group-hover:opacity-100 transition-opacity">
-                    Vote
+                <div className="flex items-center gap-3">
+                  <span className="transition-opacity group-hover:opacity-0 group-hover:hidden md:group-hover:block md:group-hover:opacity-100">
+                    [{votesCount}]
                   </span>
-                )}
+                  {isSubmitting && isSelected ? (
+                    <Loader2 className="w-4 h-4 animate-spin" />
+                  ) : (
+                    <span className="opacity-0 group-hover:opacity-100 transition-opacity absolute right-4 md:relative md:right-0">
+                      // VOTE
+                    </span>
+                  )}
+                </div>
               </button>
             );
           })}
         </div>
 
         {voteError && (
-          <p className="mb-3 text-xs text-rose-600 dark:text-rose-400 font-medium">
-            ⚠️ {voteError}
+          <p className="mb-3 text-[10px] uppercase font-bold tracking-widest text-white bg-red-600 px-2 py-1 inline-block">
+            ERROR: {voteError}
           </p>
         )}
       </div>
 
       {/* Footer Meta */}
-      <div className="pt-4 border-t border-slate-100 dark:border-slate-800/50 flex items-center justify-between text-xs text-slate-500 dark:text-slate-400">
-        <span>{poll.options.length} options</span>
-        <span className="font-medium flex items-center gap-1">
-          <VoteIcon className="w-3.5 h-3.5 text-indigo-500" />
-          <span>{poll.totalVotes ?? 0} total votes</span>
+      <div className="pt-4 mt-2 border-t-2 border-zinc-900 dark:border-zinc-800 flex items-center justify-between text-[10px] uppercase font-bold tracking-widest text-zinc-500 dark:text-zinc-400">
+        <span>[{poll.options.length} OPTIONS]</span>
+        <span className="flex items-center gap-2">
+          <VoteIcon className="w-3.5 h-3.5 text-zinc-900 dark:text-zinc-100" />
+          <span>{poll.totalVotes ?? 0} TOTAL</span>
         </span>
       </div>
     </div>

@@ -1,23 +1,25 @@
 import { UserRepository } from '../repositories/user.repository';
 import { IUser } from '../models/user.model';
 import { AppError } from '../utils/app-error';
+import { MESSAGES } from '../utils/messages';
+import { HTTP_STATUS } from '../utils/http-status';
 
 export class UserService {
   constructor(private userRepo: UserRepository) { }
 
   async joinGuest(username: string): Promise<IUser> {
     if (!username || typeof username !== 'string') {
-      throw new AppError('Username is required', 400);
+      throw new AppError(MESSAGES.USER.USERNAME_REQUIRED, HTTP_STATUS.BAD_REQUEST);
     }
 
     username = username.trim();
 
     if (username.length === 0) {
-      throw new AppError('Username cannot be empty', 400);
+      throw new AppError(MESSAGES.USER.USERNAME_EMPTY, HTTP_STATUS.BAD_REQUEST);
     }
 
     if (username.length < 2 || username.length > 30) {
-      throw new AppError('Username must be between 2 and 30 characters', 400);
+      throw new AppError(MESSAGES.USER.USERNAME_LENGTH, HTTP_STATUS.BAD_REQUEST);
     }
 
     // Check if user already exists with this username
@@ -27,7 +29,7 @@ export class UserService {
       return updatedUser || existingUser;
     }
 
-    return await this.userRepo.create(username);
+    return await this.userRepo.create({ username });
   }
 
   async getCurrentUser(userId: string): Promise<IUser | null> {
