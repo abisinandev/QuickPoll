@@ -3,11 +3,7 @@ import { Header } from '../components/Header';
 import { JoinForm } from '../components/JoinForm';
 import { ProductPreview } from '../components/ProductPreview';
 import { Terminal, Code, Cpu } from 'lucide-react';
-
-interface FeaturePillProps {
-  icon: React.ReactNode;
-  label: string;
-}
+import { FeaturePillProps } from '../types/join-page.types';
 
 const FeaturePill: React.FC<FeaturePillProps> = ({ icon, label }) => (
   <div className="inline-flex items-center gap-2 px-3 py-1.5 border-2 border-zinc-900 dark:border-zinc-100 text-zinc-900 dark:text-zinc-100 text-[10px] font-bold uppercase tracking-widest bg-transparent">

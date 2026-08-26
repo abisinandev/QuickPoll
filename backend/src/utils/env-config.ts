@@ -11,6 +11,7 @@ const envSchema = z.object({
     .default("4000"),
   MONGO_URL: z.string().min(1, 'MONGO_URL is required'),
   SESSION_SECRET: z.string().min(1, 'SESSION_SECRET is required'),
+  FRONTEND_URL: z.string(),
 });
 
 const parsed = envSchema.safeParse(process.env);
