@@ -11,4 +11,4 @@ export interface ChatMessage {
 }
 
 export const fetchMessagesApi = (limit: number = 50) => 
-  apiClient<{ messages: ChatMessage[] }>(`/api/chat/messages?limit=${limit}`);
+  apiClient<{ messages: ChatMessage[] }>(`${import.meta.env.VITE_BACKEND_URL}/api/chat/messages?limit=${limit}`);
