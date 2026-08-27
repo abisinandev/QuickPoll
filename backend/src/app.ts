@@ -1,12 +1,10 @@
-import express, { Application, Request, Response, NextFunction } from 'express';
+import express, { Application, Request, Response } from 'express';
 import cors from 'cors';
 import morgan from 'morgan';
 import { env } from './utils/env-config';
 import { sendSuccess } from './utils/response';
 import { HttpStatusCode } from 'axios';
-import userRoutes from './routes/user.routes';
 import { sessionMiddleware } from './configs/session';
-import { ROUTES } from './utils/routes';
 
 const app: Application = express();
 
@@ -31,16 +29,5 @@ app.get('/api/health', (_req: Request, res: Response) => {
     timestamp: new Date().toISOString(),
   });
 });
-
-//API Routes
-app.use(ROUTES.USER.BASE, userRoutes);
-// app.use('/api/polls', pollRoutes);
-
-// app.all('*', (req: Request, _res: Response, next: NextFunction) => {
-//   next(new AppError(`Route ${req.method} ${req.originalUrl} not found`, 404));
-// });
-
-// //Global error handler middleware
-// app.use(globalErrorHandler);
 
 export default app;

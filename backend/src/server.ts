@@ -4,6 +4,7 @@ import app from './app';
 import { connectDB } from './configs/db';
 import { createServer } from 'http';
 import { buildContainer } from './utils/containers';
+import { createUserRouter } from './routes/user.routes';
 import { createPollRouter } from './routes/poll.routes';
 import { createChatRouter } from './routes/chat.routes';
 import { AppError } from './utils/app-error';
@@ -37,6 +38,9 @@ const startServer = async () => {
 
     const container = buildContainer(httpServer);
 
+    const userRouter = createUserRouter(
+      container.userController
+    );
     const pollRouter = createPollRouter(
       container.pollController
     );
@@ -44,6 +48,7 @@ const startServer = async () => {
       container.chatController
     );
 
+    app.use(ROUTES.USER.BASE, userRouter);
     app.use(ROUTES.POLL.BASE, pollRouter);
     app.use(ROUTES.CHAT.BASE, chatRouter);
 
