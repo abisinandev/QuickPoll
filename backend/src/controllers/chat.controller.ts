@@ -11,7 +11,7 @@ export class ChatController {
   async getRecentMessages(req: Request, res: Response, next: NextFunction): Promise<void> {
     try {
       const limitParam = req.query.limit ? parseInt(req.query.limit as string, 10) : 50;
-      const limit = isNaN(limitParam) ? 50 : limitParam;
+      const limit = isNaN(limitParam) ? 50 : Math.min(Math.max(limitParam, 1), 100);
 
       const messages: ChatMessageDto[] = await this.chatService.getRecentMessages(limit);
 
