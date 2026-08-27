@@ -34,7 +34,7 @@ export class UserController {
     try {
       const userId = req.session.userId;
       if (!userId) {
-        sendSuccess(res, HTTP_STATUS.UNAUTHORIZED, MESSAGES.USER.UNAUTHENTICATED, { user: null });
+        sendSuccess(res, HTTP_STATUS.OK, MESSAGES.USER.UNAUTHENTICATED, { user: null });
         return;
       }
 
@@ -42,7 +42,7 @@ export class UserController {
 
       if (!user) {
         req.session.destroy(() => { });
-        sendSuccess(res, HTTP_STATUS.UNAUTHORIZED, MESSAGES.USER.UNAUTHENTICATED, { user: null });
+        sendSuccess(res, HTTP_STATUS.OK, MESSAGES.USER.UNAUTHENTICATED, { user: null });
         return;
       }
 

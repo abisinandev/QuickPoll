@@ -5,6 +5,7 @@ import { pollDto } from '../types/polls.dto';
 import { ISocketService } from './interfaces/socket-service.interfaces';
 import { IChatService } from './interfaces/chat-service.interface';
 import { MESSAGES } from '../utils/messages';
+import { env } from '../utils/env-config';
 
 export class SocketService implements ISocketService {
 
@@ -17,10 +18,7 @@ export class SocketService implements ISocketService {
     ) {
         this.io = new SocketIoServer(this._httpServer, {
             cors: {
-                origin: [
-                    'http://localhost:3000',
-                    'http://127.0.0.1:3000',
-                ],
+                origin: env.FRONTEND_URL,
                 credentials: true,
             }
         })
