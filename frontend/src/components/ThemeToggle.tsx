@@ -14,8 +14,8 @@ export const ThemeToggle: React.FC = () => {
         dark:bg-slate-800 dark:border-slate-700 dark:text-slate-300 dark:hover:bg-slate-700"
     >
       {theme === 'dark'
-        ? <Sun className="w-4 h-4" />
-        : <Moon className="w-4 h-4" />
+        ? <Sun className="w-4 h-4 text-amber-400" />
+        : <Moon className="w-4 h-4 text-indigo-600" />
       }
     </button>
   );

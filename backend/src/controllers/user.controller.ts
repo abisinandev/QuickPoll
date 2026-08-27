@@ -56,4 +56,18 @@ export class UserController {
       next(error);
     }
   };
+
+  leave = async (req: Request, res: Response, next: NextFunction): Promise<void> => {
+    try {
+      req.session.destroy((err) => {
+        if (err) {
+          return next(err);
+        }
+        res.clearCookie('connect.sid');
+        sendSuccess(res, HTTP_STATUS.OK, MESSAGES.USER.LEFT, { user: null });
+      });
+    } catch (error) {
+      next(error);
+    }
+  };
 }

@@ -29,7 +29,14 @@ export class UserService {
       return updatedUser || existingUser;
     }
 
-    return await this.userRepo.create({ username });
+    try {
+      return await this.userRepo.create({ username });
+    } catch (error: any) {
+      if (error?.code === 11000) {
+        throw new AppError(MESSAGES.USER.USERNAME_TAKEN, HTTP_STATUS.CONFLICT);
+      }
+      throw error;
+    }
   }
 
   async getCurrentUser(userId: string): Promise<IUser | null> {

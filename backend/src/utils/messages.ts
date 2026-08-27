@@ -10,6 +10,8 @@ export const MESSAGES = {
     USERNAME_REQUIRED: 'Username is required',
     USERNAME_EMPTY: 'Username cannot be empty',
     USERNAME_LENGTH: 'Username must be between 2 and 30 characters',
+    USERNAME_TAKEN: 'That username was just taken. Please choose a different one.',
+    LEFT: 'Left QuickPoll successfully',
   },
 
   POLL: {

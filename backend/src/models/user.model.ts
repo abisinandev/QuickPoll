@@ -13,6 +13,7 @@ const userSchema = new Schema<IUser>(
       required: [true, 'Username is required'],
       unique: true,
       trim: true,
+      lowercase: true,
     },
     createdAt: {
       type: Date,

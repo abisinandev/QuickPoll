@@ -8,6 +8,7 @@ export const ROUTES = {
     BASE: '/api/users',
     JOIN: '/join',
     ME: '/me',
+    LEAVE: '/leave',
   },
 
   POLL: {

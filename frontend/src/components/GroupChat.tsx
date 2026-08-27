@@ -3,6 +3,7 @@ import { Send, MessageCircle, Users, Sparkles, Loader2 } from 'lucide-react';
 import { useAuth } from '../store/AuthContext';
 import socket from '../socket/socket.config';
 import { fetchMessagesApi, ChatMessage } from '../api/chat.api';
+import { getAvatarColor } from '../utils/avatarColor';
 
 export const GroupChat: React.FC = () => {
   const { user } = useAuth();
@@ -138,18 +139,19 @@ export const GroupChat: React.FC = () => {
       {/* Header */}
       <div className="px-6 py-4 border-b-2 border-zinc-900 dark:border-zinc-800 flex items-center justify-between bg-zinc-50 dark:bg-zinc-950 z-10">
         <div className="flex items-center gap-3">
-          <div className="w-10 h-10 border-2 border-zinc-900 dark:border-zinc-100 flex items-center justify-center text-zinc-900 dark:text-zinc-100">
+          <div className="w-10 h-10 border-2 border-indigo-600 dark:border-indigo-400 flex items-center justify-center text-indigo-600 dark:text-indigo-400">
             <MessageCircle className="w-5 h-5" />
           </div>
           <div>
             <h3 className="font-black text-xl text-zinc-900 dark:text-white uppercase tracking-widest flex items-center gap-2">
-              GLOBAL_SYNC
+              DISCUSS_TOGETHER
               <span className="flex h-3 w-3 relative">
-                <span className="relative inline-flex h-3 w-3 bg-black dark:bg-white animate-pulse"></span>
+                <span className="animate-ping absolute inline-flex h-full w-full rounded-full bg-emerald-400 opacity-75" />
+                <span className="relative inline-flex h-3 w-3 rounded-full bg-emerald-500"></span>
               </span>
             </h3>
             <div className="flex items-center gap-1.5 text-[10px] uppercase font-bold tracking-widest text-zinc-500 dark:text-zinc-400">
-              <Users className="w-3.5 h-3.5" />
+              <Users className="w-3.5 h-3.5 text-emerald-600 dark:text-emerald-400" />
               <span>{onlineCount > 0 ? `${onlineCount} CONNECTED` : 'LIVE'}</span>
             </div>
           </div>
@@ -160,14 +162,14 @@ export const GroupChat: React.FC = () => {
       <div className="flex-1 overflow-y-auto p-6 space-y-6 bg-zinc-50/30 dark:bg-transparent">
         {isLoading ? (
           <div className="flex justify-center items-center h-full">
-            <Loader2 className="w-6 h-6 animate-spin text-zinc-900 dark:text-white" />
+            <Loader2 className="w-6 h-6 animate-spin text-indigo-600 dark:text-indigo-400" />
           </div>
         ) : (
           messages.map((msg) => {
             const isSelf = msg.user.id === user?.id;
             return (
               <div key={msg.id} className={`flex gap-3 ${isSelf ? 'flex-row-reverse' : 'flex-row'}`}>
-                <div className="w-8 h-8 border-2 border-zinc-900 dark:border-zinc-100 bg-zinc-100 dark:bg-zinc-900 flex items-center justify-center text-zinc-900 dark:text-zinc-100 text-xs font-black shrink-0">
+                <div className={`w-8 h-8 border-2 border-zinc-900 dark:border-zinc-100 ${getAvatarColor(msg.user.username)} flex items-center justify-center text-white text-xs font-black shrink-0`}>
                   {msg.user.username.charAt(0).toUpperCase()}
                 </div>
 
@@ -214,7 +216,7 @@ export const GroupChat: React.FC = () => {
           <button
             type="submit"
             disabled={!newMessage.trim()}
-            className="absolute right-2 w-10 h-10 bg-zinc-900 dark:bg-white disabled:bg-zinc-300 dark:disabled:bg-zinc-800 flex items-center justify-center text-white dark:text-black transition-colors"
+            className="absolute right-2 w-10 h-10 bg-indigo-600 hover:bg-indigo-700 dark:bg-indigo-500 dark:hover:bg-indigo-400 disabled:bg-zinc-300 dark:disabled:bg-zinc-800 flex items-center justify-center text-white transition-colors"
           >
             <Send className="w-4 h-4 ml-0.5" />
           </button>
@@ -227,7 +229,7 @@ export const GroupChat: React.FC = () => {
         {!chatError && (
           <div className="mt-2 flex items-center justify-between text-[9px] uppercase font-bold tracking-widest text-zinc-400">
             <span className="flex items-center gap-1">
-              <Sparkles className="w-3 h-3" />
+              <Sparkles className="w-3 h-3 text-amber-500 dark:text-amber-400" />
               STRICT COMMS PROTOCOL
             </span>
             <span>MAX 200 CHARS</span>

@@ -4,8 +4,13 @@ import { User } from '../types/user.types';
 export const checkSessionApi = () => 
   apiClient<{ user: User | null }>(`${import.meta.env.VITE_BACKEND_URL}/api/users/me`);
 
-export const joinUserApi = (username: string) => 
+export const joinUserApi = (username: string) =>
   apiClient<{ user: User }>(`${import.meta.env.VITE_BACKEND_URL}/api/users/join`, {
     method: 'POST',
     body: JSON.stringify({ username }),
+  });
+
+export const leaveUserApi = () =>
+  apiClient<{ user: null }>(`${import.meta.env.VITE_BACKEND_URL}/api/users/leave`, {
+    method: 'POST',
   });
