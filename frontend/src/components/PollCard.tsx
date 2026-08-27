@@ -45,12 +45,12 @@ export const PollCard: React.FC<PollCardProps> = ({ poll, onVoteSuccess }) => {
       <div>
         {/* Header Badges */}
         <div className="flex items-center justify-between gap-3 mb-4">
-          <span className="inline-flex items-center gap-1.5 text-[10px] font-bold tracking-widest uppercase px-2 py-0.5 border-2 border-zinc-900 dark:border-zinc-100 text-zinc-900 dark:text-zinc-100">
+          <span className="inline-flex items-center gap-1.5 text-[10px] font-bold tracking-widest uppercase px-2 py-0.5 border-2 border-emerald-600 dark:border-emerald-400 text-emerald-700 dark:text-emerald-400">
             <CheckCircle className="w-3 h-3" />
             <span>ACTIVE</span>
           </span>
           {hasVoted && (
-            <span className="inline-flex items-center gap-1.5 text-[10px] font-bold tracking-widest uppercase px-2 py-0.5 bg-zinc-900 text-white dark:bg-white dark:text-zinc-900">
+            <span className="inline-flex items-center gap-1.5 text-[10px] font-bold tracking-widest uppercase px-2 py-0.5 bg-indigo-600 text-white dark:bg-indigo-500">
               <CheckCircle2 className="w-3 h-3" />
               <span>VOTED</span>
             </span>
@@ -77,32 +77,32 @@ export const PollCard: React.FC<PollCardProps> = ({ poll, onVoteSuccess }) => {
                   key={option._id}
                   className={`relative p-3.5 border-2 transition-all overflow-hidden ${
                     isUserChoice
-                      ? 'border-zinc-900 dark:border-zinc-100'
+                      ? 'border-indigo-600 dark:border-indigo-400'
                       : 'border-zinc-300 dark:border-zinc-800'
                   }`}
                 >
                   {/* Animated Background Progress Fill */}
                   <div
                     className={`absolute inset-y-0 left-0 transition-all duration-700 ease-out ${
-                      isUserChoice ? 'bg-zinc-900/10 dark:bg-zinc-100/10' : 'bg-zinc-200 dark:bg-zinc-900'
+                      isUserChoice ? 'bg-indigo-600/10 dark:bg-indigo-400/10' : 'bg-zinc-200 dark:bg-zinc-900'
                     }`}
                     style={{ width: `${percentage}%` }}
                   />
 
                   <div className="relative z-10 flex items-center justify-between text-xs font-bold tracking-widest uppercase">
                     <div className="flex items-center gap-2">
-                      <span className={`${isUserChoice ? 'text-zinc-900 dark:text-zinc-100' : 'text-zinc-500 dark:text-zinc-400'}`}>
+                      <span className={`${isUserChoice ? 'text-indigo-700 dark:text-indigo-300' : 'text-zinc-500 dark:text-zinc-400'}`}>
                         {option.text}
                       </span>
                       {isUserChoice && (
-                        <span className="text-[9px] px-1.5 py-0.5 bg-zinc-900 text-white dark:bg-white dark:text-zinc-900">
+                        <span className="text-[9px] px-1.5 py-0.5 bg-indigo-600 text-white dark:bg-indigo-500">
                           YOUR VOTE
                         </span>
                       )}
                     </div>
                     <div className="flex items-center gap-2">
                       <span className="text-zinc-400 dark:text-zinc-600">[{votesCount}]</span>
-                      <span className={isUserChoice ? 'text-zinc-900 dark:text-zinc-100' : 'text-zinc-500 dark:text-zinc-400'}>
+                      <span className={isUserChoice ? 'text-indigo-700 dark:text-indigo-300' : 'text-zinc-500 dark:text-zinc-400'}>
                         {percentage}%
                       </span>
                     </div>
@@ -120,8 +120,8 @@ export const PollCard: React.FC<PollCardProps> = ({ poll, onVoteSuccess }) => {
                 disabled={isSubmitting}
                 className={`group w-full flex items-center justify-between p-3.5 border-2 text-left text-xs font-bold uppercase tracking-widest transition-all cursor-pointer ${
                   isSelected
-                    ? 'border-zinc-900 dark:border-zinc-100 bg-zinc-100 dark:bg-zinc-900 text-zinc-900 dark:text-zinc-100'
-                    : 'border-zinc-300 dark:border-zinc-800 hover:border-zinc-900 dark:hover:border-zinc-100 text-zinc-600 dark:text-zinc-400 hover:text-zinc-900 dark:hover:text-zinc-100'
+                    ? 'border-indigo-600 dark:border-indigo-400 bg-indigo-50 dark:bg-indigo-950/40 text-indigo-700 dark:text-indigo-300'
+                    : 'border-zinc-300 dark:border-zinc-800 hover:border-indigo-600 dark:hover:border-indigo-400 text-zinc-600 dark:text-zinc-400 hover:text-indigo-700 dark:hover:text-indigo-300'
                 }`}
               >
                 <span>
@@ -133,7 +133,7 @@ export const PollCard: React.FC<PollCardProps> = ({ poll, onVoteSuccess }) => {
                     [{votesCount}]
                   </span>
                   {isSubmitting && isSelected ? (
-                    <Loader2 className="w-4 h-4 animate-spin" />
+                    <Loader2 className="w-4 h-4 animate-spin text-indigo-600 dark:text-indigo-400" />
                   ) : (
                     <span className="opacity-0 group-hover:opacity-100 transition-opacity absolute right-4 md:relative md:right-0">
                       // VOTE
@@ -156,7 +156,7 @@ export const PollCard: React.FC<PollCardProps> = ({ poll, onVoteSuccess }) => {
       <div className="pt-4 mt-2 border-t-2 border-zinc-900 dark:border-zinc-800 flex items-center justify-between text-[10px] uppercase font-bold tracking-widest text-zinc-500 dark:text-zinc-400">
         <span>[{poll.options.length} OPTIONS]</span>
         <span className="flex items-center gap-2">
-          <VoteIcon className="w-3.5 h-3.5 text-zinc-900 dark:text-zinc-100" />
+          <VoteIcon className="w-3.5 h-3.5 text-indigo-600 dark:text-indigo-400" />
           <span>{poll.totalVotes ?? 0} TOTAL</span>
         </span>
       </div>

@@ -66,7 +66,7 @@ export const JoinForm: React.FC<JoinFormProps> = ({ onJoinSuccess }) => {
           USER IDENTIFIER
         </label>
         <div className="relative">
-          <div className="absolute inset-y-0 left-0 pl-3.5 flex items-center pointer-events-none text-zinc-400 dark:text-zinc-500">
+          <div className="absolute inset-y-0 left-0 pl-3.5 flex items-center pointer-events-none text-indigo-500 dark:text-indigo-400">
             <UserIcon className="w-4 h-4" />
           </div>
           <input
@@ -90,7 +90,7 @@ export const JoinForm: React.FC<JoinFormProps> = ({ onJoinSuccess }) => {
       <button
         type="submit"
         disabled={isJoining || !usernameInput.trim()}
-        className="w-full bg-zinc-900 dark:bg-zinc-100 text-white dark:text-zinc-900 hover:bg-black dark:hover:bg-white font-bold py-4 px-5 rounded-none flex items-center justify-center gap-3 transition-colors disabled:opacity-50 disabled:cursor-not-allowed cursor-pointer text-xs uppercase tracking-widest border-2 border-transparent hover:border-zinc-900 dark:hover:border-zinc-100"
+        className="w-full bg-indigo-600 dark:bg-indigo-500 text-white hover:bg-indigo-700 dark:hover:bg-indigo-400 font-bold py-4 px-5 rounded-none flex items-center justify-center gap-3 transition-colors disabled:opacity-50 disabled:cursor-not-allowed cursor-pointer text-xs uppercase tracking-widest border-2 border-transparent"
       >
         {isJoining ? (
           <>

@@ -39,22 +39,22 @@ export const JoinPage: React.FC = () => {
                   <span className="text-zinc-400 dark:text-zinc-500">EXECUTE.</span>
                 </h1>
                 <p className="text-sm font-medium text-zinc-600 dark:text-zinc-400 leading-relaxed max-w-md uppercase tracking-wider">
-                  Real-time polling infrastructure. Synchronized chat protocols. Connect now.
+                  Real-time polling application. Discuss your thoughts. Connect for free.
                 </p>
               </div>
 
               {/* Feature Pills */}
               <div className="flex flex-wrap gap-3">
                 <FeaturePill
-                  icon={<Terminal className="w-4 h-4" />}
+                  icon={<Terminal className="w-4 h-4 text-cyan-600 dark:text-cyan-400" />}
                   label="LIVE_POLL"
                 />
                 <FeaturePill
-                  icon={<Code className="w-4 h-4" />}
+                  icon={<Code className="w-4 h-4 text-violet-600 dark:text-violet-400" />}
                   label="SYNC_CHAT"
                 />
                 <FeaturePill
-                  icon={<Cpu className="w-4 h-4" />}
+                  icon={<Cpu className="w-4 h-4 text-amber-600 dark:text-amber-400" />}
                   label="ZERO_LATENCY"
                 />
               </div>
@@ -82,7 +82,7 @@ export const JoinPage: React.FC = () => {
         <div className="max-w-6xl mx-auto flex flex-col sm:flex-row items-center justify-between gap-4 text-[10px] font-bold tracking-widest uppercase text-zinc-500 dark:text-zinc-400">
           <span>© {new Date().getFullYear()} QUICKPOLL SYS // V1.0.0</span>
           <span className="flex items-center gap-2">
-            <span className="w-2 h-2 bg-black dark:bg-white animate-pulse" />
+            <span className="w-2 h-2 rounded-full bg-emerald-500 animate-pulse" />
             SYS_OPERATIONAL
           </span>
         </div>

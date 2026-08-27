@@ -77,7 +77,7 @@ export const QuickPollPage: React.FC = () => {
           <section className="mb-10 p-8 border-2 border-zinc-900 dark:border-zinc-800 bg-zinc-50 dark:bg-zinc-950 relative overflow-hidden">
           <div className="relative z-10">
             <div className="inline-flex items-center gap-2 text-[10px] font-bold text-zinc-900 dark:text-zinc-100 uppercase tracking-widest mb-3 bg-zinc-200 dark:bg-zinc-800 px-2 py-1">
-              <Terminal className="w-3 h-3" />
+              <Terminal className="w-3 h-3 text-emerald-600 dark:text-emerald-400" />
               <span>SYS_DASHBOARD // ACTIVE</span>
             </div>
             <h1 className="text-3xl font-black text-zinc-900 dark:text-white tracking-tighter uppercase mb-2">
@@ -102,7 +102,7 @@ export const QuickPollPage: React.FC = () => {
 
           {isLoading ? (
             <div className="py-16 text-center text-zinc-400 flex flex-col items-center gap-3">
-              <Loader2 className="w-8 h-8 animate-spin text-zinc-900 dark:text-white" />
+              <Loader2 className="w-8 h-8 animate-spin text-indigo-600 dark:text-indigo-400" />
               <p className="text-[10px] uppercase font-bold tracking-widest">CONNECTING TO NODES...</p>
             </div>
           ) : error ? (

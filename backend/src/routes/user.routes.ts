@@ -7,6 +7,7 @@ export const createUserRouter = (controller: UserController): Router => {
 
   router.post(ROUTES.USER.JOIN, controller.joinGuest.bind(controller));
   router.get(ROUTES.USER.ME, controller.getMe.bind(controller));
+  router.post(ROUTES.USER.LEAVE, controller.leave.bind(controller));
 
   return router;
 };
