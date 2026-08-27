@@ -230,7 +230,7 @@ export const GroupChat: React.FC = () => {
           <div className="mt-2 flex items-center justify-between text-[9px] uppercase font-bold tracking-widest text-zinc-400">
             <span className="flex items-center gap-1">
               <Sparkles className="w-3 h-3 text-amber-500 dark:text-amber-400" />
-              STRICT COMMS PROTOCOL
+              Chat kindly, connect freely
             </span>
             <span>MAX 200 CHARS</span>
           </div>
