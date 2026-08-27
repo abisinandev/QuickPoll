@@ -7,6 +7,7 @@ export const sessionMiddleware = session({
 
     resave: false,
     saveUninitialized: false,
+    proxy: env.NODE_ENV === 'production',
 
     store: MongoStore.create({
         mongoUrl: env.MONGO_URL,
