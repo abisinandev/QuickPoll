@@ -1,11 +1,11 @@
-import { pollDto } from '../../types/polls.dto';
+import { pollDto, voteResultDto } from '../../types/polls.dto';
 
 export interface IPollService {
     vote(
         userId: string,
         pollId: string,
         optionId: string
-    ): Promise<pollDto>;
+    ): Promise<voteResultDto>;
 
     getActivePolls(
         userId?: string

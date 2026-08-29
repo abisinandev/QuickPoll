@@ -1,6 +1,6 @@
 import { IPoll } from '../models/poll.model';
 import { AppError } from '../utils/app-error';
-import { pollDto, pollOptionsDto } from '../types/polls.dto';
+import { pollDto, pollOptionsDto, voteResultDto, VoteAction } from '../types/polls.dto';
 import { IPollRepository } from '../repositories/interfaces/poll-repository.interfaces';
 import { IVoteRepository } from '../repositories/interfaces/vote-repository.interface';
 import { ISocketService } from './interfaces/socket-service.interfaces';
@@ -16,7 +16,7 @@ export class PollService implements IPollService {
     private readonly _socketService: ISocketService,
   ) {}
 
-  async vote(userId: string, pollId: string, optionId: string): Promise<pollDto> {
+  async vote(userId: string, pollId: string, optionId: string): Promise<voteResultDto> {
 
     if (!userId) {
       throw new AppError(MESSAGES.USER.UNAUTHORIZED, HTTP_STATUS.UNAUTHORIZED);
@@ -41,23 +41,39 @@ export class PollService implements IPollService {
       throw new AppError(MESSAGES.POLL.OPTION_NOT_FOUND, HTTP_STATUS.BAD_REQUEST);
     }
 
-    // Checking already voted
     const existingVote = await this._voteRepo.findByUserAndPoll(userId, pollId);
-    if (existingVote) {
-      throw new AppError(MESSAGES.POLL.ALREADY_VOTED, HTTP_STATUS.BAD_REQUEST);
+
+    let userVotedOptionId: string | null;
+    let action: VoteAction;
+
+    if (existingVote && existingVote.optionId.toString() === optionId) {
+      // undo/redo
+      await this._voteRepo.deleteVote(userId, pollId);
+      userVotedOptionId = null;
+      action = 'removed';
+
+    } else if (existingVote) {
+
+      await this._voteRepo.updateVoteOption(userId, pollId, optionId);
+      userVotedOptionId = optionId;
+      action = 'changed';
+
+    } else {
+
+      await this._voteRepo.createVote(userId, pollId, optionId);
+      userVotedOptionId = optionId;
+      action = 'added';
+
     }
 
-    // Create vote
-    await this._voteRepo.createVote(userId, pollId, optionId);
-
     // Return result
-    const updatedPoll = await this.getPollResult(poll, userId, optionId);
+    const updatedPoll = await this.getPollResult(poll, userId, userVotedOptionId);
 
-    // Broadcast updated polls
+    // Broadcast updated polls to everyone
     const broadcastPoll = { ...updatedPoll, userVotedOptionId: null };
     this._socketService.emitPollUpdated(broadcastPoll);
 
-    return updatedPoll;
+    return { poll: updatedPoll, action };
   }
 
   private async getPollResult(

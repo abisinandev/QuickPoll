@@ -24,9 +24,16 @@ export class PollController {
       const { pollId } = req.params;
       const { optionId } = req.body;
 
-      const updatedPoll = await this._pollService.vote(userId, pollId, optionId);
+      const { poll, action } = await this._pollService.vote(userId, pollId, optionId);
 
-      sendSuccess(res, HTTP_STATUS.OK, MESSAGES.POLL.VOTE_RECORDED, { poll: updatedPoll });
+      const message =
+        action === 'removed'
+          ? MESSAGES.POLL.VOTE_REMOVED
+          : action === 'changed'
+            ? MESSAGES.POLL.VOTE_UPDATED
+            : MESSAGES.POLL.VOTE_RECORDED;
+
+      sendSuccess(res, HTTP_STATUS.OK, message, { poll });
     } catch (error) {
       next(error);
     }

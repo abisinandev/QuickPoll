@@ -16,7 +16,7 @@ export const PollCard: React.FC<PollCardProps> = ({ poll, onVoteSuccess }) => {
   const hasVoted = Boolean(poll.userVotedOptionId);
 
   const handleVote = async (optionId: string) => {
-    if (hasVoted || isSubmitting) return;
+    if (isSubmitting) return;
 
     setSelectedOptionId(optionId);
     setVoteError(null);
@@ -37,6 +37,7 @@ export const PollCard: React.FC<PollCardProps> = ({ poll, onVoteSuccess }) => {
       setVoteError('Network error while voting.');
     } finally {
       setIsSubmitting(false);
+      setSelectedOptionId(null);
     }
   };
 
@@ -71,14 +72,18 @@ export const PollCard: React.FC<PollCardProps> = ({ poll, onVoteSuccess }) => {
             const votesCount = option.votesCount ?? 0;
 
             if (hasVoted) {
-              // Results Mode (After Voting)
+              // Results Mode (After Voting) — still clickable: re-click your
+              // option to unselect it, or click another to switch your vote.
               return (
-                <div
+                <button
                   key={option._id}
-                  className={`relative p-3.5 border-2 transition-all overflow-hidden ${
+                  type="button"
+                  onClick={() => handleVote(option._id)}
+                  disabled={isSubmitting}
+                  className={`group relative w-full p-3.5 border-2 text-left transition-all overflow-hidden cursor-pointer disabled:cursor-wait ${
                     isUserChoice
                       ? 'border-indigo-600 dark:border-indigo-400'
-                      : 'border-zinc-300 dark:border-zinc-800'
+                      : 'border-zinc-300 dark:border-zinc-800 hover:border-indigo-600 dark:hover:border-indigo-400'
                   }`}
                 >
                   {/* Animated Background Progress Fill */}
@@ -95,19 +100,33 @@ export const PollCard: React.FC<PollCardProps> = ({ poll, onVoteSuccess }) => {
                         {option.text}
                       </span>
                       {isUserChoice && (
-                        <span className="text-[9px] px-1.5 py-0.5 bg-indigo-600 text-white dark:bg-indigo-500">
+                        <span className="text-[9px] px-1.5 py-0.5 bg-indigo-600 text-white dark:bg-indigo-500 group-hover:hidden">
                           YOUR VOTE
+                        </span>
+                      )}
+                      {isUserChoice && !isSubmitting && (
+                        <span className="hidden group-hover:inline text-[9px] px-1.5 py-0.5 bg-red-600 text-white">
+                          CLICK TO UNSELECT
+                        </span>
+                      )}
+                      {!isUserChoice && !isSubmitting && (
+                        <span className="hidden group-hover:inline text-[9px] px-1.5 py-0.5 bg-zinc-900 text-white dark:bg-white dark:text-zinc-900">
+                          SWITCH VOTE
                         </span>
                       )}
                     </div>
                     <div className="flex items-center gap-2">
-                      <span className="text-zinc-400 dark:text-zinc-600">[{votesCount}]</span>
+                      {isSubmitting && isSelected ? (
+                        <Loader2 className="w-3.5 h-3.5 animate-spin text-indigo-600 dark:text-indigo-400" />
+                      ) : (
+                        <span className="text-zinc-400 dark:text-zinc-600">[{votesCount}]</span>
+                      )}
                       <span className={isUserChoice ? 'text-indigo-700 dark:text-indigo-300' : 'text-zinc-500 dark:text-zinc-400'}>
                         {percentage}%
                       </span>
                     </div>
                   </div>
-                </div>
+                </button>
               );
             }
 
