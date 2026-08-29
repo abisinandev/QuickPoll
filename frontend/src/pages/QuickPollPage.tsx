@@ -95,7 +95,7 @@ export const QuickPollPage: React.FC = () => {
             <h2 className="text-lg font-black text-zinc-900 dark:text-white uppercase tracking-widest flex items-center gap-2">
               <span>POLLING_NODES</span>
               <span className="text-[10px] font-bold px-2 py-0.5 bg-zinc-900 text-white dark:bg-white dark:text-black">
-                {polls.length} ONLINE
+                {polls.length} POLLS
               </span>
             </h2>
           </div>

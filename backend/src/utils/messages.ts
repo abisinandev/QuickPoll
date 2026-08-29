@@ -17,11 +17,12 @@ export const MESSAGES = {
   POLL: {
     FETCHED: 'Polls retrieved successfully',
     VOTE_RECORDED: 'Vote recorded successfully',
+    VOTE_UPDATED: 'Vote updated successfully',
+    VOTE_REMOVED: 'Vote removed successfully',
     NOT_FOUND: 'Poll not found',
     NOT_ACTIVE: 'Poll is not active',
     OPTION_NOT_FOUND: 'Option does not belong to this poll',
     IDS_REQUIRED: 'Poll ID and Option ID are required',
-    ALREADY_VOTED: 'You have already voted on this poll',
   },
 
   CHAT: {

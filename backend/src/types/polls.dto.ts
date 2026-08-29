@@ -15,3 +15,10 @@ export interface pollDto {
   createdAt: Date;
   updatedAt: Date;
 }
+
+export type VoteAction = 'added' | 'changed' | 'removed';
+
+export interface voteResultDto {
+  poll: pollDto;
+  action: VoteAction;
+}

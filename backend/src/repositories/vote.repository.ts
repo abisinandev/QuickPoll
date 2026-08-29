@@ -38,6 +38,35 @@ export class VoteRepository
     return vote.save();
   }
 
+  async updateVoteOption(
+    userId: string,
+    pollId: string,
+    optionId: string
+  ): Promise<IVote | null> {
+
+    return this.model.findOneAndUpdate(
+      {
+        userId: new Types.ObjectId(userId),
+        pollId: new Types.ObjectId(pollId),
+      },
+      {
+        optionId: new Types.ObjectId(optionId),
+      },
+      { new: true }
+    );
+  }
+
+  async deleteVote(
+    userId: string,
+    pollId: string
+  ): Promise<void> {
+
+    await this.model.deleteOne({
+      userId: new Types.ObjectId(userId),
+      pollId: new Types.ObjectId(pollId),
+    });
+  }
+
   async getVotesForPoll(
     pollId: string
   ): Promise<IVote[]> {
